@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../res/strings.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  bool isListView = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.appName),
+        title: Text(
+          AppStrings.notes,
+          style: GoogleFonts.poppins(fontSize: 28),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -16,9 +28,9 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.grid_view_sharp),
-            tooltip: AppStrings.addNote,
-            onPressed: () {},
+            icon: Icon(isListView ? Icons.splitscreen : Icons.grid_view ),
+            tooltip: AppStrings.changeView,
+            onPressed: () => setState(() => isListView = !isListView),
           ),
         ],
       ),

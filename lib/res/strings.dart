@@ -7,4 +7,5 @@ class AppStrings {
   static const String addNote = 'Add Note';
   static const String addTodo = 'Add Todo';
   static const String search = 'Search';
+  static const String changeView = 'Change View';
 }
