@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notudus/res/values.dart';
+import 'package:notudus/screens/notes_list_screen.dart';
+import 'package:sqflite/sqflite.dart';
 import '../res/strings.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.database});
+  final Database database;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           AppStrings.notes,
-          style: GoogleFonts.poppins(fontSize: 28),
+          style: GoogleFonts.poppins(fontSize: AppValues.appbarFontSize),
         ),
         actions: [
           IconButton(
@@ -34,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: const Placeholder(),
+      body: NotesListScreen(database: widget.database),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -46,11 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
             label: AppStrings.todos,
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: AppStrings.addNote,
-        child: const Icon(Icons.add),
       ),
     );
   }
