@@ -1,14 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:notudus/models/note.dart';
 import 'package:notudus/res/values.dart';
-import 'package:notudus/services/local_db.dart';
-import 'package:sqflite/sqflite.dart';
+import '../../models/note.dart';
+import '../../services/local_db.dart';
 
 class NewNoteForm extends StatefulWidget {
-  const NewNoteForm({super.key, required this.database});
-  final Database database;
+  const NewNoteForm({super.key});
 
   @override
   State<NewNoteForm> createState() => _NewNoteFormState();
@@ -19,23 +17,31 @@ class _NewNoteFormState extends State<NewNoteForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final LocalDBService _dbService = LocalDBService();
 
-  @override
-  void dispose() async {
-    log('Title: ${_titleController.text}');
-    log('Note: ${_noteController.text}');
-    var newNote = Note(
-        id: 0,
+  Future<void> _saveNote() async {
+    if (_titleController.text.isNotEmpty || _noteController.text.isNotEmpty) {
+      final note = Note(
         title: _titleController.text,
         note: _noteController.text,
-        lastEdit: DateTime.now()
-    );
-    var addedNote = await LocalDBService.addNote(newNote, widget.database);
-    if (addedNote != "Error") {
-      var notes = await LocalDBService.getNotes(widget.database);
-      log('Notes: $notes');
+        lastEdit: DateTime.now(),
+      );
+      try {
+        final id = await _dbService.addNote(note);
+        log('Note saved correctly with id: $id');
+        //TODO: add a snackbar to show the user that the note was saved
+      } catch (error) {
+        log('Error saving note: $error');
+      }
+    } else {
+      log('Empty note, not saved');
+      //TODO: add a snackbar to show the user that the note was not saved
     }
+  }
 
+  @override
+  void dispose() {
+    _saveNote();
     _titleController.dispose();
     _noteController.dispose();
     super.dispose();

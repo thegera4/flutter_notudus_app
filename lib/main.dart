@@ -1,32 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:notudus/res/strings.dart';
 import 'package:notudus/screens/home_screen.dart';
-import 'package:flutter/widgets.dart';
-import 'package:notudus/services/local_db.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final database = await openDatabase(
-      join(await getDatabasesPath(), AppStrings.dbName),
-      onCreate: (db, version) {
-        return db.execute(AppStrings.createNotesTable,);
-      },
-      version: 1,
-
-  );
-  var notes = await LocalDBService.getNotes(database);
-  log('Notes: $notes');
-  runApp(MyApp(database: database));
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.database});
-  final Database database;
-
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +23,13 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: MyHomePage(database: database),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.database});
-  final Database database;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -59,5 +37,5 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  Widget build(BuildContext context) => HomeScreen(database: widget.database);
+  Widget build(BuildContext context) => const HomeScreen();
 }

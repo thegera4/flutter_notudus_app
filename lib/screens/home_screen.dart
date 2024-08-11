@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/notes_list_screen.dart';
-import 'package:sqflite/sqflite.dart';
 import '../res/strings.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.database});
-  final Database database;
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: NotesListScreen(database: widget.database),
+      body: const NotesListScreen(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
