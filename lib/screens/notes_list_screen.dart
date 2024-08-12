@@ -1,13 +1,16 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:notudus/screens/widgets/empty_view.dart';
+import 'package:notudus/screens/widgets/notes_grid.dart';
+import 'package:notudus/screens/widgets/notes_list.dart';
 import 'package:notudus/services/local_db.dart';
 import '../models/note.dart';
 import '../res/strings.dart';
 import 'create_note_screen.dart';
 
 class NotesListScreen extends StatefulWidget {
-  const NotesListScreen({super.key});
+  const NotesListScreen({super.key, required this.isListView});
+  final bool isListView;
 
   @override
   State<NotesListScreen> createState() => _NotesListScreenState();
@@ -51,25 +54,8 @@ class _NotesListScreenState extends State<NotesListScreen> {
           } else {
             return StreamBuilder<List<Note>>(
               stream: dbService.listenAllNotes(),
-              builder: (context, snapshot) {
-                return ListView.builder(
-                  itemCount: snapshot.data?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final note = snapshot.data![index];
-                    return ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) =>
-                                CreateNoteScreen(note: note)
-                            )
-                        );
-                      },
-                      title: Text(note.title),
-                      subtitle: Text(note.note),
-                    );
-                  },
-                );
-              }
+              builder: (context, snapshot) => widget.isListView ?
+              NotesList(snapshot: snapshot) : NotesGrid(snapshot: snapshot),
             );
           }
         },
@@ -78,7 +64,8 @@ class _NotesListScreenState extends State<NotesListScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateNoteScreen(note: null,)),
+            MaterialPageRoute(builder: (context) =>
+            const CreateNoteScreen(note: null,)),
           );
         },
         tooltip: AppStrings.addNote,
