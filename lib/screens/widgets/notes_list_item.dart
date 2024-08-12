@@ -8,16 +8,19 @@ class NotesListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[900],
-      child: ListTile(
-        onTap: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CreateNoteScreen(note: note))
-          );
-        },
-        title: Text(note!.title),
-        subtitle: Text(note!.note),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4.0),
+      child: Card(
+        color: Colors.grey[900],
+        child: ListTile(
+          onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CreateNoteScreen(note: note))
+            );
+          },
+          title: Text(note!.title),
+          subtitle: Text(note!.note),
+        ),
       ),
     );
   }

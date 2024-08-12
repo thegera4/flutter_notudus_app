@@ -64,8 +64,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>
-            const CreateNoteScreen(note: null,)),
+            MaterialPageRoute(builder: (context) => const CreateNoteScreen(note: null)),
           );
         },
         tooltip: AppStrings.addNote,

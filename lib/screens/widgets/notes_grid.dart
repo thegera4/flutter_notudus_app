@@ -5,20 +5,22 @@ class NotesGrid extends StatelessWidget {
   const NotesGrid({super.key, required this.snapshot});
   final AsyncSnapshot snapshot;
 
-  //TODO: fix the GridView.builder because it has an error
-
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GridView.builder(
+        itemCount: snapshot.data?.length ?? 0,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 16.0,
-            mainAxisSpacing: 16.0
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 10.0
         ),
         itemBuilder: (context, index) {
-          final note = snapshot.data![index];
-          return NotesGridItem(note: note);
-        },
+            final note = snapshot.data![index];
+            return NotesGridItem(note: note);
+            },
+      ),
     );
   }
 }

@@ -20,6 +20,7 @@ class NotesGridItem extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8.0),
+              alignment: Alignment.centerLeft,
               child: Text(
                   note!.title,
                   style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)
@@ -27,6 +28,7 @@ class NotesGridItem extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(8.0),
+              alignment: Alignment.centerLeft,
               child: Text(note!.note),
             ),
           ],

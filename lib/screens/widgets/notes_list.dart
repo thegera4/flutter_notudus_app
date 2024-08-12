@@ -7,12 +7,15 @@ class NotesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: snapshot.data?.length ?? 0,
-      itemBuilder: (context, index) {
-        final note = snapshot.data![index];
-        return NotesListItem(note: note);
-      },
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ListView.builder(
+        itemCount: snapshot.data?.length ?? 0,
+        itemBuilder: (context, index) {
+          final note = snapshot.data![index];
+          return NotesListItem(note: note);
+        },
+      ),
     );
   }
 }
