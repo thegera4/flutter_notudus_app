@@ -6,7 +6,8 @@ import '../../models/note.dart';
 import '../../services/local_db.dart';
 
 class NewNoteForm extends StatefulWidget {
-  const NewNoteForm({super.key});
+  const NewNoteForm({super.key, required this.note});
+  final Note? note;
 
   @override
   State<NewNoteForm> createState() => _NewNoteFormState();
@@ -19,7 +20,42 @@ class _NewNoteFormState extends State<NewNoteForm> {
   final TextEditingController _noteController = TextEditingController();
   final LocalDBService _dbService = LocalDBService();
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _noteController.text = widget.note!.note;
+    }
+  }
+
+  Future<void> _updateNote() async {
+      if (_titleController.text == widget.note!.title && _noteController.text == widget.note!.note) {
+        log('Note not modified, not saved');
+        return;
+      }
+      final note = Note.withId(
+        id: widget.note!.id,
+        title: _titleController.text,
+        note: _noteController.text,
+        lastEdit: DateTime.now(),
+      );
+      try {
+        await _dbService.updateNote(note);
+        log('Note updated correctly with id: ${widget.note!.id}');
+      } catch (error) {
+        log('Error updating note: $error');
+      }
+  }
+
   Future<void> _saveNote() async {
+    // if the note is not new, update it
+    if (widget.note != null) {
+      await _updateNote();
+      return;
+    }
+
+    // if the note is new, save it
     if (_titleController.text.isNotEmpty || _noteController.text.isNotEmpty) {
       final note = Note(
         title: _titleController.text,
@@ -37,6 +73,7 @@ class _NewNoteFormState extends State<NewNoteForm> {
       log('Empty note, not saved');
       //TODO: add a snackbar to show the user that the note was not saved
     }
+
   }
 
   @override

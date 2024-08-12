@@ -99,6 +99,17 @@ class LocalDBService {
     await db.delete('notes', where: 'id = ?', whereArgs: [id],);
   }
 
+  ///Updates a note in the database
+  Future<void> updateNote(Note note) async {
+    final db = await database;
+    await db.update(
+      'notes',
+      note.toMap(),
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
+  }
+
   ///Creates the TODOS table in the database
   Future<void> createTodosTable(Database database) async {
     await database.execute('CREATE TABLE IF NOT EXISTS todos('

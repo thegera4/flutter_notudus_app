@@ -58,8 +58,11 @@ class _NotesListScreenState extends State<NotesListScreen> {
                     final note = snapshot.data![index];
                     return ListTile(
                       onTap: () {
-                        //TODO: navigate to note detail screen
-                        dbService.deleteNote(note.id!);
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) =>
+                                CreateNoteScreen(note: note)
+                            )
+                        );
                       },
                       title: Text(note.title),
                       subtitle: Text(note.note),
@@ -75,7 +78,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateNoteScreen()),
+            MaterialPageRoute(builder: (context) => const CreateNoteScreen(note: null,)),
           );
         },
         tooltip: AppStrings.addNote,
