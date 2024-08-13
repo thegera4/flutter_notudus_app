@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:notudus/res/text_styles.dart';
 import 'package:notudus/res/values.dart';
+import 'package:notudus/screens/widgets/custom_note_input.dart';
 import '../../models/note.dart';
 import '../../res/strings.dart';
 import '../../services/local_db.dart';
@@ -99,21 +100,21 @@ class _NewNoteFormState extends State<NewNoteForm> {
           ),
           child: Column(
             children: [
-              TextFormField(
+              CustomNoteInput(
                 controller: _titleController,
-                style: GoogleFonts.poppins(fontSize: AppValues.noteTitleSize),
-                decoration: const InputDecoration(
-                  hintText: AppStrings.hintTitle,
-                  border: InputBorder.none,
+                textStyle: AppTextStyles.noteInputStyle(
+                    AppValues.noteTitleSize,
+                    FontWeight.bold
                 ),
+                hintText: AppStrings.hintTitle
               ),
-              TextFormField(
-                controller: _noteController,
-                style: GoogleFonts.poppins(fontSize: AppValues.noteTextSize),
-                decoration: const InputDecoration(
-                  hintText: AppStrings.hintText,
-                  border: InputBorder.none,
-                ),
+              CustomNoteInput(
+                  controller: _noteController,
+                  textStyle: AppTextStyles.noteInputStyle(
+                      AppValues.noteTextSize,
+                      FontWeight.normal
+                  ),
+                  hintText: AppStrings.hintText
               ),
             ],
           ),

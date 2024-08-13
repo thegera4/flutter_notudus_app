@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:notudus/models/note.dart';
 import 'package:notudus/models/provided_data.dart';
@@ -44,11 +43,9 @@ class CreateNoteScreen extends StatelessWidget {
               showDialog(context: context, builder: (context) {
                 return AlertDialog(
                   backgroundColor: Colors.grey[900],
-                  title: Text(
+                  title: const Text(
                     AppStrings.deleteAlertTitle,
-                    style: GoogleFonts.poppins(
-                        fontSize: AppValues.alertTitleSize
-                    ),
+                    style: TextStyle(fontSize: AppValues.alertTitleSize),
                   ),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,

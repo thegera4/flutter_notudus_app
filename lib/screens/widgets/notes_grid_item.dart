@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notudus/res/values.dart';
+import 'package:notudus/screens/widgets/last_modified_on.dart';
+import 'package:notudus/screens/widgets/note_item_preview.dart';
+import 'package:notudus/screens/widgets/note_item_title.dart';
 import '../../models/note.dart';
 import '../create_note_screen.dart';
 
@@ -7,7 +9,6 @@ class NotesGridItem extends StatelessWidget {
   const NotesGridItem({super.key, required this.note});
   final Note? note;
 
-  //TODO: fix the overflow when the text is to big to show only a portion of it
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,27 +17,15 @@ class NotesGridItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (context) =>
-                  CreateNoteScreen(note: note))
+                  CreateNoteScreen(note: note)
+              )
           );
         },
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(AppValues.normalPadding),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                  note!.title,
-                  style: const TextStyle(
-                      fontSize: AppValues.noteItemTitleSize,
-                      fontWeight: FontWeight.bold
-                  )
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(AppValues.normalPadding),
-              alignment: Alignment.centerLeft,
-              child: Text(note!.note),
-            ),
+            NoteItemTitle(note: note),
+            NoteItemPreview(note: note),
+            LastModifiedOn(note: note),
           ],
         ),
       ),

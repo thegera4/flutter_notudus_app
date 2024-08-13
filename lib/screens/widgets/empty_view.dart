@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:notudus/res/strings.dart';
 import '../../res/assets.dart';
@@ -13,9 +12,9 @@ class EmptyView extends StatelessWidget {
     return Column(
       children: [
         Lottie.asset(AnimationAssets.empty),
-        Text(
-            AppStrings.noNotes,
-            style: GoogleFonts.poppins(fontSize: AppValues.emptyTextSize),
+        const Text(
+          AppStrings.noNotes,
+          style: TextStyle(fontSize: AppValues.emptyTextSize),
         ),
       ],
     );

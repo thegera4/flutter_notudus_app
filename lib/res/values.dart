@@ -6,6 +6,7 @@ class AppValues {
   static const double noteTextSize = 20;
   static const double alertTitleSize = 24;
   static const double noteItemTitleSize = 18;
+  static const double noteItemDateSize = 10;
 
   // Padding
   static const double smallPadding = 4;

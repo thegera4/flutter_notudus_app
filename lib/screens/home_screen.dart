@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/notes_list_screen.dart';
 import '../res/strings.dart';
@@ -19,9 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           AppStrings.notes,
-          style: GoogleFonts.poppins(fontSize: AppValues.appbarFontSize),
+          style: TextStyle(fontSize: AppValues.appbarFontSize),
         ),
         actions: [
           IconButton(

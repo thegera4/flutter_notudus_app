@@ -31,5 +31,5 @@ class AppStrings {
   static const String deleteTodo = 'Delete Todo';
   static const String deleteAlertTitleTodo = 'Delete Todo?';
   static const String deleteAlertBodyTodo = 'Are you sure you want to delete this todo?';
-
+  static const String lastModifiedOn = 'Last modified on: ';
 }
