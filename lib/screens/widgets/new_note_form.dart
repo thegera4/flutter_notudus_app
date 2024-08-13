@@ -100,21 +100,29 @@ class _NewNoteFormState extends State<NewNoteForm> {
           ),
           child: Column(
             children: [
-              CustomNoteInput(
-                controller: _titleController,
-                textStyle: AppTextStyles.noteInputStyle(
-                    AppValues.noteTitleSize,
-                    FontWeight.bold
-                ),
-                hintText: AppStrings.hintTitle
-              ),
-              CustomNoteInput(
-                  controller: _noteController,
-                  textStyle: AppTextStyles.noteInputStyle(
-                      AppValues.noteTextSize,
-                      FontWeight.normal
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CustomNoteInput(
+                        controller: _titleController,
+                        textStyle: AppTextStyles.noteInputStyle(
+                            AppValues.noteTitleSize,
+                            FontWeight.bold
+                        ),
+                        hintText: AppStrings.hintTitle
+                      ),
+                      CustomNoteInput(
+                          controller: _noteController,
+                          textStyle: AppTextStyles.noteInputStyle(
+                              AppValues.noteTextSize,
+                              FontWeight.normal
+                          ),
+                          hintText: AppStrings.hintText
+                      ),
+                    ],
                   ),
-                  hintText: AppStrings.hintText
+                ),
               ),
             ],
           ),

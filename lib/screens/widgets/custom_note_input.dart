@@ -16,10 +16,9 @@ class CustomNoteInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       style: textStyle,
-      decoration: InputDecoration(
-        hintText: hintText,
-        border: InputBorder.none,
-      ),
+      maxLines: null,
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(hintText: hintText, border: InputBorder.none,)
     );
   }
 }
