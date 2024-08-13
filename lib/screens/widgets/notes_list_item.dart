@@ -15,7 +15,8 @@ class NotesListItem extends StatelessWidget {
         child: ListTile(
           onTap: () {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CreateNoteScreen(note: note))
+                MaterialPageRoute(builder: (context) =>
+                    CreateNoteScreen(note: note, dbService: null))
             );
           },
           title: Text(note!.title),

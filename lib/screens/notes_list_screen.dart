@@ -29,9 +29,6 @@ class _NotesListScreenState extends State<NotesListScreen> {
   Future<List<Note>> _loadNotes() async {
     try {
       final notes = await dbService.getNotes();
-      for (var note in notes) {
-        log('Note: ${note.toString()}');
-      }
       return notes;
     } catch (error) {
       log('Error getting notes: $error');
@@ -54,8 +51,19 @@ class _NotesListScreenState extends State<NotesListScreen> {
           } else {
             return StreamBuilder<List<Note>>(
               stream: dbService.listenAllNotes(),
-              builder: (context, snapshot) => widget.isListView ?
-              NotesList(snapshot: snapshot) : NotesGrid(snapshot: snapshot),
+              builder: (context, snapshot) {
+                return AnimatedSwitcher(
+                  transitionBuilder: (child, animation) =>
+                      SlideTransition(position: Tween<Offset>(
+                        begin: const Offset(1, 0),
+                        end: Offset.zero,
+                      ).animate(animation), child: child),
+                  duration: const Duration(milliseconds: 300),
+                  child: widget.isListView
+                      ? NotesList(snapshot: snapshot)
+                      : NotesGrid(snapshot: snapshot),
+                );
+              }
             );
           }
         },
@@ -64,7 +72,8 @@ class _NotesListScreenState extends State<NotesListScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CreateNoteScreen(note: null)),
+            MaterialPageRoute(builder: (context) =>
+                CreateNoteScreen(note: null, dbService: dbService)),
           );
         },
         tooltip: AppStrings.addNote,

@@ -13,7 +13,8 @@ class NotesGridItem extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CreateNoteScreen(note: note))
+              MaterialPageRoute(builder: (context) =>
+                  CreateNoteScreen(note: note, dbService: null))
           );
         },
         child: Column(
