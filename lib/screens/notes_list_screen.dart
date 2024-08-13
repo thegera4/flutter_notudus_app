@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:notudus/screens/widgets/empty_view.dart';
 import 'package:notudus/screens/widgets/notes_grid.dart';
@@ -26,12 +25,13 @@ class _NotesListScreenState extends State<NotesListScreen> {
     notesListFuture  = _loadNotes();
   }
 
+  /// Calls the "getNotes" method from the db service to get all notes.
+  /// Returns a list of notes if successful, or an empty list if not.
   Future<List<Note>> _loadNotes() async {
     try {
       final notes = await dbService.getNotes();
       return notes;
     } catch (error) {
-      log('Error getting notes: $error');
       return <Note>[];
     }
   }
@@ -45,7 +45,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading notes'));
+            return const Center(child: Text(AppStrings.errorLoading));
           } else if (snapshot.hasData && snapshot.data!.isEmpty) {
             return const EmptyView();
           } else {
@@ -54,14 +54,16 @@ class _NotesListScreenState extends State<NotesListScreen> {
               builder: (context, snapshot) {
                 return AnimatedSwitcher(
                   transitionBuilder: (child, animation) =>
-                      SlideTransition(position: Tween<Offset>(
-                        begin: const Offset(1, 0),
-                        end: Offset.zero,
-                      ).animate(animation), child: child),
+                      SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          )
+                              .animate(animation), child: child
+                      ),
                   duration: const Duration(milliseconds: 300),
-                  child: widget.isListView
-                      ? NotesList(snapshot: snapshot)
-                      : NotesGrid(snapshot: snapshot),
+                  child: widget.isListView ? NotesList(snapshot: snapshot) :
+                                            NotesGrid(snapshot: snapshot),
                 );
               }
             );
@@ -73,7 +75,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) =>
-                CreateNoteScreen(note: null, dbService: dbService)),
+                const CreateNoteScreen(note: null)),
           );
         },
         tooltip: AppStrings.addNote,

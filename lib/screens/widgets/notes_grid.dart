@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notudus/screens/widgets/notes_grid_item.dart';
+import '../../res/values.dart';
 
 class NotesGrid extends StatelessWidget {
   const NotesGrid({super.key, required this.snapshot});
@@ -8,7 +9,7 @@ class NotesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(AppValues.gridItemPadding),
       child: GridView.builder(
         itemCount: snapshot.data?.length ?? 0,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,10 +1,8 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notudus/res/values.dart';
-import 'package:provider/provider.dart';
 import '../../models/note.dart';
-import '../../models/provided_data.dart';
+import '../../res/strings.dart';
 import '../../services/local_db.dart';
 
 class NewNoteForm extends StatefulWidget {
@@ -25,38 +23,18 @@ class _NewNoteFormState extends State<NewNoteForm> {
   @override
   void initState() {
     super.initState();
-    Provider.of<ProvidedData>(context, listen: false).addListener(_checkDelete);
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _noteController.text = widget.note!.note;
     }
   }
 
-  void _checkDelete() {
-    if (Provider.of<ProvidedData>(context, listen: false).isDeleting) {
-      _deleteNote();
-    }
-  }
-
-  Future<void> _deleteNote() async {
-    if (widget.note != null) {
-      await _dbService.deleteNote(widget.note!.id!);
-      Provider.of<ProvidedData>(context, listen: false).setIsDeleting(false);
-      Navigator.of(context).pop();
-    }
-  }
-
+  /// Calls the "updateNote" method from the db service to update a note.
+  /// Throws an exception if the note is not updated.
   Future<void> _updateNote() async {
-    // check if the user is trying to delete the note
-    /*if(widget.note != null &&
-        (Provider.of<ProvidedData>(context, listen: false).isDeleting == true)) {
-      return;
-    }*/
-
-    // check if the note was not modified
+    // check if the note was not modified (no need to update)
     if (_titleController.text == widget.note!.title &&
         _noteController.text == widget.note!.note) {
-      log('Note not modified, not saved');
       return;
     }
 
@@ -70,13 +48,14 @@ class _NewNoteFormState extends State<NewNoteForm> {
 
     try {
       await _dbService.updateNote(note);
-      log('Note updated correctly with id: ${widget.note!.id}');
     } catch (error) {
-      log('Error updating note: $error');
+      throw Exception(AppStrings.errorUpdating + error.toString());
     }
 
   }
 
+  /// Calls the "addNote" method from the db service to save a note.
+  /// Throws an exception if the note is not saved.
   Future<void> _saveNote() async {
     // if the note is not new, run the update method (delete or update)
     if (widget.note != null) {
@@ -92,23 +71,16 @@ class _NewNoteFormState extends State<NewNoteForm> {
         lastEdit: DateTime.now(),
       );
       try {
-        final id = await _dbService.addNote(note);
-        log('Note saved correctly with id: $id');
-        //TODO: add a snackbar to show the user that the note was saved
+        await _dbService.addNote(note);
       } catch (error) {
-        log('Error saving note: $error');
+        throw Exception(AppStrings.errorSaving + error.toString());
       }
-    } else {
-      log('Empty note, not saved');
-      //TODO: add a snackbar to show the user that the note was not saved
     }
 
   }
 
-  //TODO: funciona el borrado pero arroja error
   @override
   void dispose() {
-    Provider.of<ProvidedData>(context, listen: false).removeListener(_checkDelete);
     _saveNote();
     _titleController.dispose();
     _noteController.dispose();
@@ -121,14 +93,17 @@ class _NewNoteFormState extends State<NewNoteForm> {
       child: Form(
         key: _formKey,
         child: Padding(
-          padding: const EdgeInsets.only(left: AppValues.bigPadding, right: AppValues.bigPadding),
+          padding: const EdgeInsets.only(
+              left: AppValues.bigPadding,
+              right: AppValues.bigPadding
+          ),
           child: Column(
             children: [
               TextFormField(
                 controller: _titleController,
                 style: GoogleFonts.poppins(fontSize: AppValues.noteTitleSize),
                 decoration: const InputDecoration(
-                  hintText: 'Note title',
+                  hintText: AppStrings.hintTitle,
                   border: InputBorder.none,
                 ),
               ),
@@ -136,7 +111,7 @@ class _NewNoteFormState extends State<NewNoteForm> {
                 controller: _noteController,
                 style: GoogleFonts.poppins(fontSize: AppValues.noteTextSize),
                 decoration: const InputDecoration(
-                  hintText: 'Write note',
+                  hintText: AppStrings.hintText,
                   border: InputBorder.none,
                 ),
               ),

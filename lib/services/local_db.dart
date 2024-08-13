@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:notudus/res/strings.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/note.dart';
 import 'package:path/path.dart';
@@ -55,12 +55,11 @@ class LocalDBService {
         );
       });
     } catch(e) {
-      log('Error getting notes: $e');
-      throw Exception('Error getting notes');
+      throw Exception(AppStrings.errorGettingNotes);
     }
   }
 
-  ///Listens to changes in the notes table to update the UI
+  ///Listens to changes in the notes table to update the UI.
   ///Returns a Stream with a list of notes
   Stream<List<Note>> listenAllNotes() async* {
     final db = await database;
@@ -77,8 +76,8 @@ class LocalDBService {
     });
   }
 
-  ///Adds a new note to the database
-  ///Returns a Future with a message indicating if the note was added or not
+  ///Adds a new note to the database.
+  ///Returns a Future with a message indicating if the note was added or not.
   Future<String> addNote(Note note) async {
     try {
       final db = await database;
@@ -87,27 +86,37 @@ class LocalDBService {
         note.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      return 'Note added';
+      return AppStrings.noteAdded;
     } catch (e) {
-      return 'Error';
+      return AppStrings.error;
     }
   }
 
-  ///Deletes a note from the database
+  ///Deletes a note from the database.
+  ///Throws an exception if there is an error.
   Future<void> deleteNote(int id) async {
     final db = await database;
-    await db.delete('notes', where: 'id = ?', whereArgs: [id],);
+    try {
+      await db.delete('notes', where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      throw Exception(AppStrings.errorDeleting + e.toString());
+    }
   }
 
-  ///Updates a note in the database
+  ///Updates a note in the database.
+  ///Throws an exception if there is an error.
   Future<void> updateNote(Note note) async {
     final db = await database;
-    await db.update(
-      'notes',
-      note.toMap(),
-      where: 'id = ?',
-      whereArgs: [note.id],
-    );
+    try {
+      await db.update(
+        'notes',
+        note.toMap(),
+        where: 'id = ?',
+        whereArgs: [note.id],
+      );
+    } catch (e) {
+      throw Exception(AppStrings.errorUpdating + e.toString());
+    }
   }
 
   ///Creates the TODOS table in the database
