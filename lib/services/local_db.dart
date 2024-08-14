@@ -63,7 +63,7 @@ class LocalDBService {
   ///Returns a Stream with a list of notes
   Stream<List<Note>> listenAllNotes() async* {
     final db = await database;
-    yield* Stream.periodic(const Duration(seconds: 1)).asyncMap((_) async {
+    yield* Stream.periodic(const Duration(milliseconds: 500)).asyncMap((_) async {
       final List<Map<String, dynamic>> maps = await db.query('notes');
       return List.generate(maps.length, (index) {
         return Note.withId(

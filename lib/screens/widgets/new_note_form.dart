@@ -50,7 +50,9 @@ class _NewNoteFormState extends State<NewNoteForm> {
     try {
       await _dbService.updateNote(note);
     } catch (error) {
-      throw Exception(AppStrings.errorUpdating + error.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.errorUpdating)),
+      );
     }
 
   }
@@ -74,7 +76,9 @@ class _NewNoteFormState extends State<NewNoteForm> {
       try {
         await _dbService.addNote(note);
       } catch (error) {
-        throw Exception(AppStrings.errorSaving + error.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.errorSaving)),
+        );
       }
     }
 

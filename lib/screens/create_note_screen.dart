@@ -24,7 +24,9 @@ class CreateNoteScreen extends StatelessWidget {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
     } catch (error) {
-      throw Exception(AppStrings.errorDeleting + error.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.errorDeleting)),
+      );
     }
   }
 
@@ -53,10 +55,11 @@ class CreateNoteScreen extends StatelessWidget {
                     children: [
                       SizedBox(
                           child: Lottie.asset(
-                              height: AppValues.deleteAnimationHeight,
-                              width: AppValues.deleteAnimationWidth,
-                              AnimationAssets.delete,
-                              fit: BoxFit.cover
+                            height: AppValues.deleteAnimationHeight,
+                            width: AppValues.deleteAnimationWidth,
+                            AnimationAssets.delete,
+                            fit: BoxFit.cover,
+                            repeat: false,
                           )
                       ),
                       const Text(AppStrings.deleteAlertBody),
@@ -69,12 +72,13 @@ class CreateNoteScreen extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                          Provider.of<ProvidedData>(context, listen: false)
-                              .setIsDeleting(true);
-                        _deleteNote(note!, context, dbService).then((value) {
-                          Provider.of<ProvidedData>(context, listen: false)
-                              .setIsDeleting(false);
-                        });
+                        Provider.of<ProvidedData>(context, listen: false)
+                            .setIsDeleting(true);
+                        _deleteNote(note!, context, dbService)
+                            .then((value) {
+                              Provider.of<ProvidedData>(context, listen: false)
+                                  .setIsDeleting(false);
+                            });
                       },
                       child: const Text(
                           AppStrings.delete,

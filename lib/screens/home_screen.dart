@@ -10,6 +10,10 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+// Note app todos:
+//TODO: implement search functionality
+//TODO: implement shared preferences to save the view type
+
 class _HomeScreenState extends State<HomeScreen> {
 
   bool isListView = true;
