@@ -119,6 +119,24 @@ class LocalDBService {
     }
   }
 
+  /// Searches notes in the database based on the query.
+  /// Returns a Future with a list of notes that match the query.
+  Future<List<Note>> searchNotes(String query) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+        'notes',
+        where: 'title LIKE ? OR note LIKE ?',
+        whereArgs: ['%$query%', '%$query%']);
+    return List.generate(maps.length, (index) {
+      return Note.withId(
+        id: maps[index]['id'],
+        title: maps[index]['title'],
+        note: maps[index]['note'],
+        lastEdit: DateTime.parse(maps[index]['last_edit']),
+      );
+    });
+  }
+
   ///Creates the TODOS table in the database
   Future<void> createTodosTable(Database database) async {
     await database.execute('CREATE TABLE IF NOT EXISTS todos('

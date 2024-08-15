@@ -10,13 +10,55 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-// Note app todos:
-//TODO: implement search functionality
 //TODO: implement shared preferences to save the view type
 
 class _HomeScreenState extends State<HomeScreen> {
-
   bool isListView = true;
+  final TextEditingController _searchController = TextEditingController();
+
+  /// Calls the "searchNotes" method from the db service to get all notes that
+  /// contain the search query either on the title or the note.
+  /// Returns a list of notes if successful, or an empty list if not.
+  /// Displays a dialog with a text field to enter the search query.
+  /// If the search query is empty, it will not perform the search.
+  /// If the search query is not empty, it will call the "searchNotes" method
+  /// from the db service to get all notes that contain the search query.
+  void showSearchDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(AppStrings.search),
+            content: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(hintText: AppStrings.search),
+              onSubmitted: (query) {
+                setState(() {
+                  //_searchController.text = query;
+                });
+                Navigator.of(context).pop();
+                },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text(AppStrings.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    //_searchController.text = _searchController.text;
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text(AppStrings.search),
+              ),
+            ],
+          );
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: AppStrings.search,
-            onPressed: () {},
+            onPressed: () {
+              showSearchDialog(context);
+            },
           ),
           IconButton(
             icon: Icon(isListView ? Icons.splitscreen : Icons.grid_view ),
@@ -39,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: NotesListScreen(isListView: isListView),
+      body: NotesListScreen(isListView: isListView, searchQuery: _searchController.text),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
