@@ -8,6 +8,7 @@ class AppStrings {
   static const String addTodo = 'Add Todo';
   static const String search = 'Search';
   static const String changeView = 'Change View';
+  static const String searchSomething = 'Enter something to search';
   static const String noNotes = 'No notes found. Tap + to add a new note.';
   static const String noTodos = 'No todos found. Tap + to add a new todo.';
   static const String noteAdded = 'Note added';

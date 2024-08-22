@@ -21,8 +21,8 @@ class CreateNoteScreen extends StatelessWidget {
       if (note.id != null && dbService != null) {
         await dbService?.deleteNote(note.id!);
       }
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(true);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.errorDeleting)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/notes_list_screen.dart';
+import 'package:notudus/screens/widgets/search_overlay.dart';
 import '../res/strings.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isListView = true;
-  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchOverlayVisible = false;
+  //final TextEditingController _searchController = TextEditingController();
 
   /// Calls the "searchNotes" method from the db service to get all notes that
   /// contain the search query either on the title or the note.
@@ -23,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// If the search query is empty, it will not perform the search.
   /// If the search query is not empty, it will call the "searchNotes" method
   /// from the db service to get all notes that contain the search query.
-  void showSearchDialog(BuildContext context) {
+  /*void showSearchDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -56,9 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           );
     });
+  }*/
+
+  void _showSearchOverlay() {
+    setState(() {
+      _isSearchOverlayVisible = true;
+    });
   }
 
-
+  void _hideSearchOverlay() {
+    setState(() {
+      _isSearchOverlayVisible = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.search),
             tooltip: AppStrings.search,
             onPressed: () {
-              showSearchDialog(context);
+              //showSearchDialog(context);
+              !_isSearchOverlayVisible ?
+              _showSearchOverlay() :
+              _hideSearchOverlay();
             },
           ),
           IconButton(
@@ -83,7 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: NotesListScreen(isListView: isListView, searchQuery: _searchController.text),
+      //body: NotesListScreen(isListView: isListView, searchQuery: _searchController.text),
+      body: Stack(
+        children: [
+          NotesListScreen(isListView: isListView, searchQuery: ''),
+          if (_isSearchOverlayVisible)
+            SearchOverlay(onClose: _hideSearchOverlay),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
