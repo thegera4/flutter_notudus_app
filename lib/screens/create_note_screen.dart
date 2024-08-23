@@ -10,8 +10,9 @@ import 'package:notudus/services/local_db.dart';
 import 'package:provider/provider.dart';
 
 class CreateNoteScreen extends StatelessWidget {
-  const CreateNoteScreen({super.key,required this.note});
+  const CreateNoteScreen({super.key,required this.note, this.onNoteDeleted});
   final Note? note;
+  final Function? onNoteDeleted;
 
   /// Calls the "deleteNote" method from the db service to delete a note,
   /// and navigates to the notes list screen when done.
@@ -23,6 +24,9 @@ class CreateNoteScreen extends StatelessWidget {
       }
       Navigator.of(context).pop(true);
       Navigator.of(context).pop(true);
+      if (onNoteDeleted != null) {
+        onNoteDeleted!();
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.errorDeleting)),

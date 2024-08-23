@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:notudus/res/strings.dart';
+import 'package:notudus/res/styles.dart';
 import 'package:notudus/screens/widgets/notes_list_item.dart';
 import '../../models/note.dart';
 import '../../services/local_db.dart';
 
-//TODO: fix bug when we search something and then delete the note (UI doesn't update)
-//it should close the overlay (try with provider to track the open state)
-
+/// A widget that displays a search overlay with a text field
+/// to enter the search query. It also displays the search results.
 class SearchOverlay extends StatefulWidget {
   const SearchOverlay({super.key, required this.onClose});
+  /// A function that is called when the search overlay is closed.
   final Function onClose;
 
   @override
@@ -16,10 +17,15 @@ class SearchOverlay extends StatefulWidget {
 }
 
 class _SearchOverlayState extends State<SearchOverlay> {
+  /// Controller for the search text field.
   final TextEditingController _searchController = TextEditingController();
+  /// A stream that contains the search results.
   Stream<List<Note>>? _searchResultsStream;
+  /// An instance of the local database service.
   final LocalDBService dbService = LocalDBService();
 
+  /// Calls the "searchNotes" method from the db service to get all notes that
+  /// contain the search query either on the title or the note.
   void _searchNotes(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -35,12 +41,16 @@ class _SearchOverlayState extends State<SearchOverlay> {
     return Stack(
       children: [
         GestureDetector(
-          onTap: () => widget.onClose(),
-          child: Container(
-            color: Colors.black.withOpacity(0.95),
-          ),
+          onTap: () {
+            Future.delayed(const Duration(milliseconds: 300), () {
+              widget.onClose();
+            });
+          },
+          child: Container(color: Colors.black.withOpacity(0.95),),
         ),
-        Padding(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -49,37 +59,44 @@ class _SearchOverlayState extends State<SearchOverlay> {
                 maxLines: 1,
                 controller: _searchController,
                 decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: ColorSwatch(0xFF424242, {900: Color(0xFF424242),}),
                   hintText: AppStrings.search,
                   prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16.0)),
-                  ),
+                  border: InputBorder.none,
+                  enabledBorder: AppInputStyles.searchInputBorders,
+                  focusedBorder: AppInputStyles.searchInputBorders,
                 ),
                 onChanged: _searchNotes,
               ),
               const SizedBox(height: 16.0),
-              StreamBuilder<List<Note>>(
-                stream: _searchResultsStream,
-                builder: (context, snapshot) {
-                  if (_searchResultsStream == null) {
-                    return const Text(AppStrings.searchSomething);
-                  } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return const Text(AppStrings.errorLoading);
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text(AppStrings.noNotes);
-                  } else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final note = snapshot.data![index];
-                        return NotesListItem(note: note);
-                      },
-                    );
-                  }
-                },
+              Flexible(
+                child: StreamBuilder<List<Note>>(
+                  stream: _searchResultsStream,
+                  builder: (context, snapshot) {
+                    if (_searchResultsStream == null) {
+                      return const SizedBox.shrink();
+                    } else if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text(AppStrings.errorLoading);
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text(AppStrings.noNotes);
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final note = snapshot.data![index];
+                          return NotesListItem(
+                            note: note,
+                            onNoteDeleted: widget.onClose,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notudus/res/text_styles.dart';
+import 'package:notudus/res/styles.dart';
 import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/widgets/custom_note_input.dart';
 import '../../models/note.dart';

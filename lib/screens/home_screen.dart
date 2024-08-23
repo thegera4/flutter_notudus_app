@@ -3,7 +3,10 @@ import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/notes_list_screen.dart';
 import 'package:notudus/screens/widgets/search_overlay.dart';
 import '../res/strings.dart';
+import '../utils/shared_preferences.dart';
 
+/// Home screen widget that displays the list of notes, appbar icons,
+/// and the bottom navigation bar.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -11,65 +14,38 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-//TODO: implement shared preferences to save the view type
-
 class _HomeScreenState extends State<HomeScreen> {
+  /// A boolean value to change the appbar icons based on the view type.
   bool isListView = true;
+  /// A boolean value to determine if the search overlay is visible or not.
   bool _isSearchOverlayVisible = false;
-  //final TextEditingController _searchController = TextEditingController();
 
-  /// Calls the "searchNotes" method from the db service to get all notes that
-  /// contain the search query either on the title or the note.
-  /// Returns a list of notes if successful, or an empty list if not.
-  /// Displays a dialog with a text field to enter the search query.
-  /// If the search query is empty, it will not perform the search.
-  /// If the search query is not empty, it will call the "searchNotes" method
-  /// from the db service to get all notes that contain the search query.
-  /*void showSearchDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(AppStrings.search),
-            content: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(hintText: AppStrings.search),
-              onSubmitted: (query) {
-                setState(() {
-                  //_searchController.text = query;
-                });
-                Navigator.of(context).pop();
-                },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text(AppStrings.cancel),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    //_searchController.text = _searchController.text;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text(AppStrings.search),
-              ),
-            ],
-          );
-    });
-  }*/
-
-  void _showSearchOverlay() {
-    setState(() {
-      _isSearchOverlayVisible = true;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadViewPreference();
   }
 
+  /// Loads the user's preference from the shared preferences.
+  void _loadViewPreference() async {
+    isListView = await SharedPreferencesUtil.getIsListView();
+    setState(() {});
+  }
+
+  /// Toggles the view type between list view and grid view.
+  void _toggleView() async {
+    setState(() => isListView = !isListView);
+    await SharedPreferencesUtil.setIsListView(isListView);
+  }
+
+  /// Shows the search overlay by setting the "_isSearchOverlayVisible" to true.
+  void _showSearchOverlay() {
+    setState(() => _isSearchOverlayVisible = true);
+  }
+
+  /// Hides the search overlay by setting the "_isSearchOverlayVisible" to false.
   void _hideSearchOverlay() {
-    setState(() {
-      _isSearchOverlayVisible = false;
-    });
+    setState(() =>_isSearchOverlayVisible = false);
   }
 
   @override
@@ -85,20 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.search),
             tooltip: AppStrings.search,
             onPressed: () {
-              //showSearchDialog(context);
-              !_isSearchOverlayVisible ?
-              _showSearchOverlay() :
-              _hideSearchOverlay();
+              !_isSearchOverlayVisible ? _showSearchOverlay() : _hideSearchOverlay();
             },
           ),
           IconButton(
             icon: Icon(isListView ? Icons.splitscreen : Icons.grid_view ),
             tooltip: AppStrings.changeView,
-            onPressed: () => setState(() => isListView = !isListView),
+            onPressed: _toggleView,
           ),
         ],
       ),
-      //body: NotesListScreen(isListView: isListView, searchQuery: _searchController.text),
       body: Stack(
         children: [
           NotesListScreen(isListView: isListView, searchQuery: ''),

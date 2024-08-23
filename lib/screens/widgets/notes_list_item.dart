@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:notudus/res/text_styles.dart';
+import 'package:notudus/res/styles.dart';
 import 'package:notudus/screens/widgets/last_modified_on.dart';
 import '../../models/note.dart';
 import '../../res/values.dart';
 import '../create_note_screen.dart';
 
 class NotesListItem extends StatelessWidget {
-  const NotesListItem({super.key, required this.note});
+  const NotesListItem({super.key, required this.note, this.onNoteDeleted});
   final Note? note;
+  final Function? onNoteDeleted;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class NotesListItem extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) =>
-                        CreateNoteScreen(note: note))
+                        CreateNoteScreen(note: note, onNoteDeleted: onNoteDeleted))
                 );
               },
               title: Text(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notudus/models/note.dart';
-import 'package:notudus/res/text_styles.dart';
+import 'package:notudus/res/styles.dart';
 import '../../res/values.dart';
 
 class NoteItemTitle extends StatelessWidget {

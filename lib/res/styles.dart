@@ -16,3 +16,12 @@ class AppTextStyles {
   }
 
 }
+
+class AppInputStyles {
+
+  static const searchInputBorders = OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.transparent),
+    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+  );
+
+}
