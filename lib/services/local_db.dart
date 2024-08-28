@@ -3,8 +3,8 @@ import 'package:sqflite/sqflite.dart';
 import '../models/note.dart';
 import 'package:path/path.dart';
 
+/// A service class that handles the local SQLite database operations.
 class LocalDBService {
-
   ///Singleton instance
   static final LocalDBService _instance = LocalDBService._createInstance();
   ///Database instance
@@ -34,46 +34,85 @@ class LocalDBService {
       join(await getDatabasesPath(), 'notudus.db'),
       onCreate: (db, version) async {
         await db.execute('CREATE TABLE IF NOT EXISTS notes('
-            'id INTEGER PRIMARY KEY, title TEXT, note TEXT, last_edit TEXT)');
+            'id INTEGER PRIMARY KEY, '
+            'title TEXT, '
+            'note TEXT, '
+            'last_edit TEXT, '
+            'is_locked INTEGER)');
       },
       version: 1,
     );
   }
 
-  ///Returns a Future with a list of notes from the database
-  ///Throws an exception if there is an error
-  Future<List<Note>> getNotes() async {
+  ///Returns a Future with a list of  notes from the db. If the user is authenticated,
+  ///it returns all notes, otherwise it returns only the notes with the property
+  ///is_locked = 0. Throws an exception if there is an error.
+  Future<List<Note>> getNotes(bool isAuthenticated) async {
     try{
       final db = await database;
-      final List<Map<String, dynamic>> maps = await db.query('notes');
-      return List.generate(maps.length, (index) {
-        return Note.withId(
-          id: maps[index]['id'],
-          title: maps[index]['title'],
-          note: maps[index]['note'],
-          lastEdit: DateTime.parse(maps[index]['last_edit']),
-        );
-      });
+      if (isAuthenticated) {
+        final List<Map<String, dynamic>> maps = await db.query('notes');
+        return List.generate(maps.length, (index) {
+          return Note.withId(
+            id: maps[index]['id'],
+            title: maps[index]['title'],
+            note: maps[index]['note'],
+            lastEdit: DateTime.parse(maps[index]['last_edit']),
+            isLocked: maps[index]['is_locked'],
+          );
+        });
+      } else {
+        final List<Map<String, dynamic>> maps =
+            await db.query('notes', where: 'is_locked = 0');
+        return List.generate(maps.length, (index) {
+          return Note.withId(
+            id: maps[index]['id'],
+            title: maps[index]['title'],
+            note: maps[index]['note'],
+            lastEdit: DateTime.parse(maps[index]['last_edit']),
+            isLocked: maps[index]['is_locked'] == 0,
+          );
+        });
+      }
     } catch(e) {
       throw Exception(AppStrings.errorGettingNotes);
     }
   }
 
-  ///Listens to changes in the notes table to update the UI.
+  ///Listens to changes in the notes table to update the UI. If the user is
+  ///authenticated, it returns all notes, otherwise it returns only the notes
+  ///with the property is_locked = 0.
   ///Returns a Stream with a list of notes
-  Stream<List<Note>> listenAllNotes() async* {
+  Stream<List<Note>> listenAllNotes(bool isAuthenticated) async* {
     final db = await database;
-    yield* Stream.periodic(const Duration(milliseconds: 500)).asyncMap((_) async {
-      final List<Map<String, dynamic>> maps = await db.query('notes');
-      return List.generate(maps.length, (index) {
-        return Note.withId(
-          id: maps[index]['id'],
-          title: maps[index]['title'],
-          note: maps[index]['note'],
-          lastEdit: DateTime.parse(maps[index]['last_edit']),
-        );
+    if (isAuthenticated) {
+      yield* Stream.periodic(const Duration(milliseconds: 500)).asyncMap((_) async {
+        final List<Map<String, dynamic>> maps = await db.query('notes');
+        return List.generate(maps.length, (index) {
+          return Note.withId(
+            id: maps[index]['id'],
+            title: maps[index]['title'],
+            note: maps[index]['note'],
+            lastEdit: DateTime.parse(maps[index]['last_edit']),
+            isLocked: maps[index]['is_locked'],
+          );
+        });
       });
-    });
+    } else {
+      yield* Stream.periodic(const Duration(milliseconds: 500)).asyncMap((_) async {
+        final List<Map<String, dynamic>> maps =
+        await db.query('notes', where: 'is_locked = 0');
+        return List.generate(maps.length, (index) {
+          return Note.withId(
+            id: maps[index]['id'],
+            title: maps[index]['title'],
+            note: maps[index]['note'],
+            lastEdit: DateTime.parse(maps[index]['last_edit']),
+            isLocked: maps[index]['is_locked'] == 0,
+          );
+        });
+      });
+    }
   }
 
   ///Adds a new note to the database.
@@ -133,6 +172,7 @@ class LocalDBService {
         title: maps[index]['title'],
         note: maps[index]['note'],
         lastEdit: DateTime.parse(maps[index]['last_edit']),
+        isLocked: maps[index]['is_locked'] == 0,
       );
     });
   }

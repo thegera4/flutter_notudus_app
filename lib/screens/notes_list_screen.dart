@@ -3,7 +3,9 @@ import 'package:notudus/screens/widgets/empty_view.dart';
 import 'package:notudus/screens/widgets/notes_grid.dart';
 import 'package:notudus/screens/widgets/notes_list.dart';
 import 'package:notudus/services/local_db.dart';
+import 'package:provider/provider.dart';
 import '../models/note.dart';
+import '../models/provided_data.dart';
 import '../res/strings.dart';
 import 'create_note_screen.dart';
 
@@ -26,33 +28,34 @@ class _NotesListScreenState extends State<NotesListScreen> {
     _loadNotes();
   }
 
-  /// Calls the "listenAllNotes" method from the db service to get all notes.
+  /// Calls the "listenAllNotes" method. from the db service to get the notes.
   /// Returns a list of notes if successful, or an empty list if not.
   void _loadNotes() async {
+    final providedData = Provider.of<ProvidedData>(context, listen: false);
     if (widget.searchQuery.isEmpty || widget.searchQuery == '') {
-      notesStream = dbService.listenAllNotes();
+      notesStream = dbService.listenAllNotes(providedData.isAuthenticated);
     } else {
       notesStream = Stream.fromFuture(dbService.searchNotes(widget.searchQuery));
     }
     setState(() {});
   }
 
-  @override
+  /*@override
   void didUpdateWidget(NotesListScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.searchQuery != widget.searchQuery) {
       _loadNotes(); // Reload notes when the search query changes
     }
-  }
-
-  //TODO: fix the bug when we search something and then delete the note (UI doesn't update)
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async { _loadNotes(); },
-        child: StreamBuilder<List<Note>>(
+    return Consumer<ProvidedData>(
+      builder: (context, providedData, child) {
+        return Scaffold(
+          body: RefreshIndicator(
+            onRefresh: () async { _loadNotes(); },
+            child: StreamBuilder<List<Note>>(
               stream: notesStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -78,18 +81,20 @@ class _NotesListScreenState extends State<NotesListScreen> {
                 }
               },
             ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) =>
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
                 const CreateNoteScreen(note: null)),
-          );
-        },
-        tooltip: AppStrings.addNote,
-        child: const Icon(Icons.add),
-      ),
+              );
+            },
+            tooltip: AppStrings.addNote,
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 }

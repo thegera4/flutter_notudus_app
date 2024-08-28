@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:notudus/res/values.dart';
 import 'package:notudus/screens/notes_list_screen.dart';
 import 'package:notudus/screens/widgets/search_overlay.dart';
+import 'package:provider/provider.dart';
+import '../models/provided_data.dart';
 import '../res/strings.dart';
 import '../utils/shared_preferences.dart';
 
@@ -48,47 +50,71 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() =>_isSearchOverlayVisible = false);
   }
 
+  /// Toggles the view if the user is authenticated or not.
+  void _toggleAuthentication(ProvidedData providedData) {
+    providedData.setIsAuthenticated(!providedData.isAuthenticated);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          AppStrings.notes,
-          style: TextStyle(fontSize: AppValues.appbarFontSize),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: AppStrings.search,
-            onPressed: () {
-              !_isSearchOverlayVisible ? _showSearchOverlay() : _hideSearchOverlay();
-            },
-          ),
-          IconButton(
-            icon: Icon(isListView ? Icons.splitscreen : Icons.grid_view ),
-            tooltip: AppStrings.changeView,
-            onPressed: _toggleView,
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          NotesListScreen(isListView: isListView, searchQuery: ''),
-          if (_isSearchOverlayVisible)
-            SearchOverlay(onClose: _hideSearchOverlay),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.note),
-            label: AppStrings.notes,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: AppStrings.todos,
-          ),
-        ],
+    return ChangeNotifierProvider(
+      create: (_) => ProvidedData(),
+      child: Consumer<ProvidedData>(
+        builder: (context, providedData, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                AppStrings.notes,
+                style: TextStyle(fontSize: AppValues.appbarFontSize),
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(
+                      providedData.isAuthenticated ? Icons.lock_open : Icons
+                          .lock),
+                  tooltip: AppStrings.search,
+                  onPressed: () {
+                    _toggleAuthentication(providedData);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  tooltip: AppStrings.search,
+                  onPressed: () {
+                    !_isSearchOverlayVisible
+                        ? _showSearchOverlay()
+                        : _hideSearchOverlay();
+                  },
+                ),
+                IconButton(
+                  icon: Icon(isListView ? Icons.splitscreen : Icons.grid_view),
+                  tooltip: AppStrings.changeView,
+                  onPressed: _toggleView,
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                NotesListScreen(isListView: isListView, searchQuery: ''),
+                if (_isSearchOverlayVisible)
+                  SearchOverlay(onClose: _hideSearchOverlay),
+              ],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.note),
+                  label: AppStrings.notes,
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.list),
+                  label: AppStrings.todos,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

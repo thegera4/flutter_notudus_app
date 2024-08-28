@@ -45,6 +45,7 @@ class _NewNoteFormState extends State<NewNoteForm> {
       title: _titleController.text,
       note: _noteController.text,
       lastEdit: DateTime.now(),
+      isLocked: widget.note!.isLocked,
     );
 
     try {
@@ -72,6 +73,7 @@ class _NewNoteFormState extends State<NewNoteForm> {
         title: _titleController.text,
         note: _noteController.text,
         lastEdit: DateTime.now(),
+        isLocked: false,
       );
       try {
         await _dbService.addNote(note);
